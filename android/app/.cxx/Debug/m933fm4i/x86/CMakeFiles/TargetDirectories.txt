@@ -1,0 +1,12 @@
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/CMakeFiles/appmodules.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/CMakeFiles/edit_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/CMakeFiles/rebuild_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnasyncstorage_autolinked_build/CMakeFiles/edit_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnasyncstorage_autolinked_build/CMakeFiles/rebuild_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnscreens_autolinked_build/CMakeFiles/react_codegen_rnscreens.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnscreens_autolinked_build/CMakeFiles/edit_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86/rnscreens_autolinked_build/CMakeFiles/rebuild_cache.dir

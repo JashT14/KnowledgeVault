@@ -1,0 +1,4 @@
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+D:/caffine/knowledge_vault/KnowledgeVault/android/app/.cxx/Debug/m933fm4i/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

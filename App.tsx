@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
 
 import HomeScreen from './src/screens/Home';
 import AddNoteScreen from './src/screens/AddNote';
 import SearchScreen from './src/screens/Search';
 import ViewNoteScreen from './src/screens/ViewNote';
+import RAGDemoScreen from './src/screens/RAGDemo';
 import { initDatabase } from './src/db/notes';
 
 export type RootStackParamList = {
@@ -14,6 +15,7 @@ export type RootStackParamList = {
   AddNote: undefined;
   Search: undefined;
   ViewNote: { noteId: number };
+  RAGDemo: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -26,12 +28,12 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar style="auto" />
+      <StatusBar barStyle="light-content" backgroundColor="#2196F3" />
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#6200ee',
+            backgroundColor: '#2196F3',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -58,6 +60,11 @@ export default function App() {
           name="ViewNote"
           component={ViewNoteScreen}
           options={{ title: 'View Note' }}
+        />
+        <Stack.Screen
+          name="RAGDemo"
+          component={RAGDemoScreen}
+          options={{ title: 'RAG Demo' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

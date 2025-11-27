@@ -1,7 +1,9 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
 
 # Expo
 .expo/
@@ -9,33 +11,105 @@ dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native build artifacts
 .kotlin/
 *.orig.*
+
+# Signing keys and certificates
 *.jks
 *.p8
 *.p12
 *.key
+*.keystore
 *.mobileprovision
+*.pem
+*.cer
+*.der
+*.pfx
+
+# Android
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+android/app/debug/
+*.apk
+*.aab
+*.hprof
+
+# iOS
+ios/Pods/
+ios/build/
+ios/*.xcworkspace
+ios/Podfile.lock
 
 # Metro
 .metro-health-check*
 
-# debug
+# Debug logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+*.log
 
 # macOS
 .DS_Store
-*.pem
+._*
 
-# local env files
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Environment variables
+.env
+.env.*
 .env*.local
+*.env
 
-# typescript
+# API keys and secrets
+secrets/
+config/secrets.*
+*.secret
+*.secrets
+api-keys.*
+
+# TypeScript
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 
-# generated native folders
-/ios
-/android
+# Coverage and testing
+coverage/
+.nyc_output/
+jest-results/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+
+# Sensitive data
+*.sqlite
+*.db
+!assets/models/*.onnx
+
+# Bundle files
+*.bundle
+*.bundle.meta
+
+# Generated source maps
+*.map

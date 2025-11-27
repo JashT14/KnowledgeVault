@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "knowledge-vault",
-    "slug": "knowledge-vault",
+    "name": "KnowledgeVault",
+    "slug": "KnowledgeVault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +22,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.knowledgevault"
+      "package": "com.knowledgevault"
     },
     "web": {
       "favicon": "./assets/favicon.png"

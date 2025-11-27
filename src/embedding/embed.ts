@@ -1,5 +1,6 @@
 import { InferenceSession, Tensor } from 'onnxruntime-react-native';
-import { Asset } from 'expo-asset';
+import RNFS from 'react-native-fs';
+import { Platform } from 'react-native';
 import { tokenize } from './tokenizer';
 import { l2Normalize } from '../utils/normalize';
 import { logEmbeddingTime, logDebug, logError } from '../utils/logger';
@@ -7,6 +8,19 @@ import { logEmbeddingTime, logDebug, logError } from '../utils/logger';
 // Singleton session instance
 let session: InferenceSession | null = null;
 let sessionLoading: Promise<InferenceSession> | null = null;
+
+/**
+ * Get the model path based on platform
+ */
+function getModelPath(): string {
+  if (Platform.OS === 'android') {
+    // For Android, the model should be in the assets/models folder
+    return 'models/model_int8.onnx';
+  } else {
+    // For iOS, use the bundle path
+    return `${RNFS.MainBundlePath}/assets/models/model_int8.onnx`;
+  }
+}
 
 /**
  * Load ONNX model using onnxruntime-react-native
@@ -28,25 +42,52 @@ async function loadModel(): Promise<InferenceSession> {
       logDebug('Loading ONNX model...');
       const startTime = Date.now();
       
-      // Load model asset
-      const modelAsset = Asset.fromModule(
-        require('../../assets/models/model_int8.onnx')
-      );
-      await modelAsset.downloadAsync();
+      const modelPath = getModelPath();
       
-      if (!modelAsset.localUri) {
-        throw new Error('Failed to get local URI for model');
+      // For Android, copy from assets to a readable location if needed
+      let finalModelPath = modelPath;
+      if (Platform.OS === 'android') {
+        const destPath = `${RNFS.DocumentDirectoryPath}/model_int8.onnx`;
+        
+        // Check if model already exists
+        const exists = await RNFS.exists(destPath);
+        if (!exists) {
+          // Copy from Android assets
+          logDebug(`Copying model from assets: ${modelPath} to ${destPath}`);
+          try {
+            await RNFS.copyFileAssets(modelPath, destPath);
+          } catch (copyError) {
+            const copyErrorMessage = copyError instanceof Error ? copyError.message : String(copyError || 'Unknown error');
+            throw new Error(`Failed to copy ONNX model from assets: ${copyErrorMessage}`);
+          }
+        }
+        
+        // Verify the model file exists after copy
+        const modelExists = await RNFS.exists(destPath);
+        if (!modelExists) {
+          throw new Error(`ONNX model file not found at: ${destPath}`);
+        }
+        
+        finalModelPath = destPath;
+      } else {
+        // For iOS, verify the model file exists
+        const modelExists = await RNFS.exists(finalModelPath);
+        if (!modelExists) {
+          throw new Error(`ONNX model file not found at: ${finalModelPath}`);
+        }
       }
       
       // Create inference session
-      session = await InferenceSession.create(modelAsset.localUri);
+      session = await InferenceSession.create(finalModelPath);
       
       logEmbeddingTime('Model loaded', startTime);
       return session;
     } catch (error) {
       logError('Failed to load ONNX model', error);
       sessionLoading = null;
-      throw error;
+      // Ensure error has proper message for native bridge compatibility
+      const errorMessage = error instanceof Error ? error.message : String(error || 'Unknown error loading ONNX model');
+      throw new Error(errorMessage || 'Failed to load ONNX model');
     }
   })();
   
@@ -184,7 +225,9 @@ export async function embedText(text: string): Promise<number[]> {
     return normalizedEmbedding;
   } catch (error) {
     logError('Failed to generate embedding', error);
-    throw error;
+    // Ensure error has proper message for native bridge compatibility
+    const errorMessage = error instanceof Error ? error.message : String(error || 'Unknown error generating embedding');
+    throw new Error(errorMessage || 'Failed to generate embedding');
   }
 }
 

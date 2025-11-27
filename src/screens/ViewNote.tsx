@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Animated,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
@@ -32,10 +33,31 @@ export default function ViewNoteScreen({ navigation, route }: Props) {
   const [note, setNote] = useState<Note | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Animations
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
     loadNote();
   }, [noteId]);
+
+  useEffect(() => {
+    if (note) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [note]);
 
   const loadNote = async () => {
     try {
@@ -93,7 +115,7 @@ export default function ViewNoteScreen({ navigation, route }: Props) {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#2196F3" />
         <Text style={styles.loadingText}>Loading note...</Text>
       </View>
     );
@@ -106,6 +128,7 @@ export default function ViewNoteScreen({ navigation, route }: Props) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
+          activeOpacity={0.8}
         >
           <Text style={styles.backButtonText}>Go Back</Text>
         </TouchableOpacity>
@@ -115,11 +138,19 @@ export default function ViewNoteScreen({ navigation, route }: Props) {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.content}>
+      <Animated.View
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {/* Show timestamp */}
         <View style={styles.metaContainer}>
           <Text style={styles.timestamp}>
-            📅 {formatTimestamp(note.timestamp)}
+            {formatTimestamp(note.timestamp)}
           </Text>
           <Text style={styles.noteId}>ID: {note.id}</Text>
         </View>
@@ -130,25 +161,26 @@ export default function ViewNoteScreen({ navigation, route }: Props) {
         </View>
 
         {/* Embedding info */}
-        <View style={styles.embeddingInfo}>
+        {/* <View style={styles.embeddingInfo}>
           <Text style={styles.embeddingLabel}>
-            🧠 Embedding: {note.embedding.length} dimensions
+            Embedding: {note.embedding.length} dimensions
           </Text>
-        </View>
+        </View> */}
 
         {/* Delete button (optional) */}
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={handleDelete}
           disabled={isDeleting}
+          activeOpacity={0.8}
         >
           {isDeleting ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text style={styles.deleteButtonText}>🗑️ Delete Note</Text>
+            <Text style={styles.deleteButtonText}>Delete Note</Text>
           )}
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -185,7 +217,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#2196F3',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,

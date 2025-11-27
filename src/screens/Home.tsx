@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Animated,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
@@ -16,37 +17,94 @@ interface Props {
 }
 
 export default function HomeScreen({ navigation }: Props) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+  const buttonAnims = [
+    useRef(new Animated.Value(0)).current,
+    useRef(new Animated.Value(0)).current,
+    useRef(new Animated.Value(0)).current,
+    useRef(new Animated.Value(0)).current,
+  ];
+
+  useEffect(() => {
+    // Title fade in
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Staggered button animations
+    const buttonAnimations = buttonAnims.map((anim, index) =>
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 300,
+        delay: 200 + index * 100,
+        useNativeDriver: true,
+      })
+    );
+    Animated.stagger(100, buttonAnimations).start();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to Knowledge Vault</Text>
-        <Text style={styles.subtitle}>
-          Your personal semantic note-taking app
-        </Text>
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+          <Text style={styles.title}>Knowledge Vault</Text>
+          <Text style={styles.subtitle}>
+            Your personal semantic note-taking app
+          </Text>
+        </Animated.View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('AddNote')}
-          >
-            <Text style={styles.buttonText}>➕ Add Note</Text>
-          </TouchableOpacity>
+          <Animated.View style={{ opacity: buttonAnims[0], transform: [{ scale: buttonAnims[0] }] }}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('AddNote')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.buttonText}>Add Note</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Search')}
-          >
-            <Text style={styles.buttonText}>🔍 Search Notes</Text>
-          </TouchableOpacity>
+          <Animated.View style={{ opacity: buttonAnims[1], transform: [{ scale: buttonAnims[1] }] }}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('Search')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.buttonText}>Search Notes</Text>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity
-            style={[styles.button, styles.secondaryButton]}
-            onPress={() => navigation.navigate('Search')}
-          >
-            <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-              📚 View All Notes
-            </Text>
-          </TouchableOpacity>
+          <Animated.View style={{ opacity: buttonAnims[2], transform: [{ scale: buttonAnims[2] }] }}>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryButton]}
+              onPress={() => navigation.navigate('Search')}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+                View All Notes
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+
+          <Animated.View style={{ opacity: buttonAnims[3], transform: [{ scale: buttonAnims[3] }] }}>
+            <TouchableOpacity
+              style={[styles.button, styles.demoButton]}
+              onPress={() => navigation.navigate('RAGDemo')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.demoButtonText}>RAG Demo</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
     </SafeAreaView>
@@ -82,29 +140,39 @@ const styles = StyleSheet.create({
     maxWidth: 300,
   },
   button: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#2196F3',
     paddingVertical: 16,
     paddingHorizontal: 24,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 8,
+    marginBottom: 12,
     alignItems: 'center',
-    elevation: 3,
+    elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
   },
   secondaryButton: {
     backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#6200ee',
+    borderWidth: 1,
+    borderColor: '#2196F3',
   },
   secondaryButtonText: {
-    color: '#6200ee',
+    color: '#2196F3',
+  },
+  demoButton: {
+    backgroundColor: '#4CAF50',
+    marginTop: 8,
+    borderRadius: 8,
+  },
+  demoButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

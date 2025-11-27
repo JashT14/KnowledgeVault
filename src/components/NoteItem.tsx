@@ -63,7 +63,7 @@ export default function NoteItem({ note, onPress, similarity }: Props) {
         {/* Footer with timestamp and optional similarity */}
         <View style={styles.footer}>
           <Text style={styles.timestamp}>
-            📅 {formatDate(note.timestamp)}
+            {formatDate(note.timestamp)}
           </Text>
           
           {similarity !== undefined && (

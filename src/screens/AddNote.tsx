@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Animated,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
@@ -29,6 +30,33 @@ interface Props {
 export default function AddNoteScreen({ navigation }: Props) {
   const [noteText, setNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Animations
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+  const buttonAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.timing(buttonAnim, {
+      toValue: 1,
+      duration: 300,
+      delay: 150,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const handleSubmit = async () => {
     if (!noteText.trim()) {
@@ -76,49 +104,60 @@ export default function AddNoteScreen({ navigation }: Props) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.label}>Enter your note:</Text>
-        
-        <TextInput
-          style={styles.textInput}
-          placeholder="Type your note here..."
-          placeholderTextColor="#999"
-          multiline
-          numberOfLines={10}
-          value={noteText}
-          onChangeText={setNoteText}
-          editable={!isLoading}
-          textAlignVertical="top"
-        />
-
-        <Text style={styles.charCount}>
-          {noteText.length} characters
-        </Text>
-
-        <TouchableOpacity
-          style={[
-            styles.submitButton,
-            (!noteText.trim() || isLoading) && styles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!noteText.trim() || isLoading}
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          }}
         >
-          {isLoading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator color="#fff" size="small" />
-              <Text style={styles.loadingText}>Processing...</Text>
-            </View>
-          ) : (
-            <Text style={styles.submitButtonText}>Save Note</Text>
-          )}
-        </TouchableOpacity>
+          <Text style={styles.label}>Enter your note:</Text>
+          
+          <TextInput
+            style={styles.textInput}
+            placeholder="Type your note here..."
+            placeholderTextColor="#999"
+            multiline
+            numberOfLines={10}
+            value={noteText}
+            onChangeText={setNoteText}
+            editable={!isLoading}
+            textAlignVertical="top"
+          />
 
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => navigation.goBack()}
-          disabled={isLoading}
-        >
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
+          <Text style={styles.charCount}>
+            {noteText.length} characters
+          </Text>
+        </Animated.View>
+
+        <Animated.View style={{ opacity: buttonAnim, transform: [{ scale: buttonAnim }] }}>
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              (!noteText.trim() || isLoading) && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={!noteText.trim() || isLoading}
+            activeOpacity={0.8}
+          >
+            {isLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator color="#fff" size="small" />
+                <Text style={styles.loadingText}>Processing...</Text>
+              </View>
+            ) : (
+              <Text style={styles.submitButtonText}>Save Note</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => navigation.goBack()}
+            disabled={isLoading}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -159,9 +198,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#2196F3',
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     alignItems: 'center',
     marginBottom: 12,
   },
