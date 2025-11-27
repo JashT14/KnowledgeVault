@@ -5,34 +5,22 @@ import { tokenize } from './tokenizer';
 import { l2Normalize } from '../utils/normalize';
 import { logEmbeddingTime, logDebug, logError } from '../utils/logger';
 
-// Singleton session instance
 let session: InferenceSession | null = null;
 let sessionLoading: Promise<InferenceSession> | null = null;
 
-/**
- * Get the model path based on platform
- */
 function getModelPath(): string {
   if (Platform.OS === 'android') {
-    // For Android, the model should be in the assets/models folder
     return 'models/model_int8.onnx';
   } else {
-    // For iOS, use the bundle path
     return `${RNFS.MainBundlePath}/assets/models/model_int8.onnx`;
   }
 }
 
-/**
- * Load ONNX model using onnxruntime-react-native
- * Uses singleton pattern to avoid reloading
- * @returns ONNX InferenceSession
- */
 async function loadModel(): Promise<InferenceSession> {
   if (session) {
     return session;
   }
   
-  // Prevent multiple simultaneous loading attempts
   if (sessionLoading) {
     return sessionLoading;
   }
@@ -44,15 +32,12 @@ async function loadModel(): Promise<InferenceSession> {
       
       const modelPath = getModelPath();
       
-      // For Android, copy from assets to a readable location if needed
       let finalModelPath = modelPath;
       if (Platform.OS === 'android') {
         const destPath = `${RNFS.DocumentDirectoryPath}/model_int8.onnx`;
         
-        // Check if model already exists
         const exists = await RNFS.exists(destPath);
         if (!exists) {
-          // Copy from Android assets
           logDebug(`Copying model from assets: ${modelPath} to ${destPath}`);
           try {
             await RNFS.copyFileAssets(modelPath, destPath);
@@ -62,7 +47,6 @@ async function loadModel(): Promise<InferenceSession> {
           }
         }
         
-        // Verify the model file exists after copy
         const modelExists = await RNFS.exists(destPath);
         if (!modelExists) {
           throw new Error(`ONNX model file not found at: ${destPath}`);
@@ -70,7 +54,6 @@ async function loadModel(): Promise<InferenceSession> {
         
         finalModelPath = destPath;
       } else {
-        // For iOS, verify the model file exists
         const modelExists = await RNFS.exists(finalModelPath);
         if (!modelExists) {
           throw new Error(`ONNX model file not found at: ${finalModelPath}`);
@@ -94,18 +77,12 @@ async function loadModel(): Promise<InferenceSession> {
   return sessionLoading;
 }
 
-/**
- * Convert token IDs to ONNX tensors
- * @param input_ids - Token ID array
- * @param attention_mask - Attention mask array
- * @returns Object with input tensors
- */
-function createTensors(
+
+function createTensors( //convert token ids to onnx tensors
   input_ids: number[],
   attention_mask: number[]
 ): Record<string, Tensor> {
-  // Create tensors with batch dimension [1, sequence_length]
-  const inputIdsTensor = new Tensor(
+  const inputIdsTensor = new Tensor( //creating tensors with batch dimension
     'int64',
     BigInt64Array.from(input_ids.map(BigInt)),
     [1, input_ids.length]
@@ -117,7 +94,6 @@ function createTensors(
     [1, attention_mask.length]
   );
   
-  // Token type IDs (all zeros for single sequence)
   const tokenTypeIds = new Array(input_ids.length).fill(0);
   const tokenTypeIdsTensor = new Tensor(
     'int64',
@@ -132,13 +108,6 @@ function createTensors(
   };
 }
 
-/**
- * Extract pooled output from model output
- * Uses mean pooling over token embeddings
- * @param output - Model output tensor
- * @param attentionMask - Attention mask for valid tokens
- * @returns Pooled embedding vector
- */
 function extractPooledOutput(
   output: Tensor,
   attentionMask: number[]
@@ -173,13 +142,7 @@ function extractPooledOutput(
   return pooled;
 }
 
-/**
- * Generate embedding for text
- * Main function to convert text to embedding vector
- * @param text - Input text
- * @returns Normalized embedding vector
- */
-export async function embedText(text: string): Promise<number[]> {
+export async function embedText(text: string): Promise<number[]> { //generate embedding for text - main is to convert text to vector
   const startTime = Date.now();
   
   try {

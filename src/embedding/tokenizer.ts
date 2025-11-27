@@ -1,42 +1,22 @@
 import { TokenizerOutput } from '../utils/types';
 import { logDebug } from '../utils/logger';
 
-// Import vocab.json - will be loaded at runtime
 import vocab from './vocab.json';
 
-// Special tokens
 const CLS_TOKEN = '[CLS]';
 const SEP_TOKEN = '[SEP]';
 const UNK_TOKEN = '[UNK]';
 const PAD_TOKEN = '[PAD]';
 
-// Maximum sequence length for MiniLM
 const MAX_LENGTH = 128;
 
-/**
- * Clean and preprocess input text
- * @param text - Raw input text
- * @returns Cleaned text
- */
 function cleanText(text: string): string {
-  // Convert to lowercase
   let cleaned = text.toLowerCase();
-  
-  // Remove extra whitespace
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
-  
-  // Basic punctuation handling - keep alphanumeric and basic punctuation
   cleaned = cleaned.replace(/[^\w\s.,!?'-]/g, ' ');
-  
   return cleaned;
 }
 
-/**
- * WordPiece tokenization
- * Splits words into subword tokens based on vocabulary
- * @param word - Single word to tokenize
- * @returns Array of subword tokens
- */
 function wordPieceTokenize(word: string): string[] {
   const tokens: string[] = [];
   let start = 0;
@@ -45,11 +25,9 @@ function wordPieceTokenize(word: string): string[] {
     let end = word.length;
     let foundToken: string | null = null;
     
-    // Find the longest matching subword
     while (start < end) {
       let substr = word.substring(start, end);
       
-      // Add ## prefix for non-first subwords
       if (start > 0) {
         substr = '##' + substr;
       }
@@ -63,7 +41,6 @@ function wordPieceTokenize(word: string): string[] {
     }
     
     if (foundToken === null) {
-      // Unknown character, use UNK token
       tokens.push(UNK_TOKEN);
       start++;
     } else {

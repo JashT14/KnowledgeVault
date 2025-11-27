@@ -2,14 +2,10 @@ import SQLite, { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { Note } from '../utils/types';
 import { logDebug } from '../utils/logger';
 
-// Enable promises for SQLite
 SQLite.enablePromise(true);
 
 let db: SQLiteDatabase | null = null;
 
-/**
- * Initialize SQLite database and create tables
- */
 export async function initDatabase(): Promise<void> {
   try {
     db = await SQLite.openDatabase({
@@ -17,7 +13,6 @@ export async function initDatabase(): Promise<void> {
       location: 'default',
     });
     
-    // Create notes table from migrations.sql schema
     await db.executeSql(`
       CREATE TABLE IF NOT EXISTS notes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,9 +31,6 @@ export async function initDatabase(): Promise<void> {
   }
 }
 
-/**
- * Get database instance, initializing if needed
- */
 async function getDb(): Promise<SQLiteDatabase> {
   if (!db) {
     await initDatabase();
@@ -46,14 +38,7 @@ async function getDb(): Promise<SQLiteDatabase> {
   return db!;
 }
 
-/**
- * Save a new note with text and embedding
- * @param text - The note text content
- * @param embedding - The embedding vector as number array
- * @returns The inserted note ID
- */
 export async function saveNote(text: string, embedding: number[]): Promise<number> {
-  // Validate inputs to prevent null/undefined being passed to native bridge
   if (!text || typeof text !== 'string') {
     throw new Error('Note text is required and must be a string');
   }
@@ -81,10 +66,6 @@ export async function saveNote(text: string, embedding: number[]): Promise<numbe
   }
 }
 
-/**
- * Get all notes from the database
- * @returns Array of all notes
- */
 export async function getAllNotes(): Promise<Note[]> {
   try {
     const database = await getDb();
@@ -111,11 +92,6 @@ export async function getAllNotes(): Promise<Note[]> {
   }
 }
 
-/**
- * Get a single note by ID
- * @param id - The note ID
- * @returns The note or null if not found
- */
 export async function getNoteById(id: number): Promise<Note | null> {
   try {
     const database = await getDb();
@@ -142,11 +118,7 @@ export async function getNoteById(id: number): Promise<Note | null> {
   }
 }
 
-/**
- * Delete a note by ID
- * @param id - The note ID to delete
- * @returns True if deleted, false if not found
- */
+
 export async function deleteNote(id: number): Promise<boolean> {
   try {
     const database = await getDb();

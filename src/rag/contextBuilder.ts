@@ -2,15 +2,7 @@ import { RetrievalResult, BuiltContext, Note } from '../utils/types';
 import { topK } from './rank';
 import { logDebug } from '../utils/logger';
 
-/**
- * Extract key sentences from text
- * Prioritizes first sentence and sentences with key indicators
- * @param text - Input text
- * @param maxSentences - Maximum sentences to extract
- * @returns Array of key sentences
- */
 function extractKeySentences(text: string, maxSentences: number = 3): string[] {
-  // Split into sentences
   const sentences = text
     .split(/[.!?]+/)
     .map(s => s.trim())
