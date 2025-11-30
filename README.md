@@ -43,7 +43,7 @@ npx react-native run-android
 
 ### Pre-built APK
 
-Pre-built APK releases are available from the [Releases](https://github.com/JashT14/Knowledge-Vault/releases) page.
+Pre-built APK releases are available from the [Releases](https://github.com/JashT14/KnowledgeVault/releases) page.
 
 ## Project Structure
 
